@@ -23,7 +23,8 @@ class MatchLocalDataSource internal constructor(
         //Radius in Kilometers
         val centerPoint = LatLng(location.latitude, location.longitude)
         return@withContext try {
-            val filteredMatches = matchDao.getMatches().filter {
+            val matches = matchDao.getMatches()
+            val filteredMatches = matches.filter {
                 val matchPoint = LatLng(it.location.latitude, it.location.longitude)
                 SphericalUtil.computeDistanceBetween(centerPoint, matchPoint) / 1000 < radius
             }

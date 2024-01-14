@@ -48,7 +48,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.rememberMarkerState
 import dagger.hilt.android.AndroidEntryPoint
 import dev.igorxp5.applada.R
 import kotlinx.coroutines.launch
@@ -199,7 +202,23 @@ class NearMatchesMapActivity : ComponentActivity() {
                     myLocationButtonEnabled = false
                 ),
                 properties = MapProperties(isMyLocationEnabled = isLocationPermissionGranted())
-            )
+            ) {
+                if (!cameraPositionState.isMoving) {
+                    mapViewModel.fetchNearMatches(cameraPositionState.position.target)
+                }
+                NearMatchMarkers()
+            }
+        }
+    }
+
+    @Composable
+    fun NearMatchMarkers() {
+        mapViewModel.nearMatches.value?.let { matches ->
+            matches.forEach {
+                Marker(
+                    state = rememberMarkerState(position = LatLng(it.location.latitude, it.location.longitude)),
+                )
+            }
         }
     }
 
