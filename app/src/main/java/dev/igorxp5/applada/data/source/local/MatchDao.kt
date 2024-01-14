@@ -20,6 +20,9 @@ interface MatchDao {
     @Query("SELECT * FROM matches WHERE id = :matchId")
     suspend fun getMatchById(matchId: String): Match?
 
+    @Query("SELECT * FROM matches WHERE title LIKE '%' || :title || '%'")
+    suspend fun getMatchesByTitle(title: String): List<Match>
+
     @Delete
     suspend fun deleteMatch(match: Match)
 

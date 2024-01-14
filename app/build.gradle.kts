@@ -5,7 +5,6 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
 
-    // Dependencies for Hilt
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -53,7 +52,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
     packaging {
         resources {
@@ -65,13 +64,16 @@ android {
 dependencies {
 
     // Dependencies for Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-android-compiler:2.50")
 
     // Composable Android Maps for the Maps SDK for Android
     implementation("com.google.maps.android:maps-compose:4.3.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.libraries.places:places:3.3.0")
+
+    // To calculate distance between two points in Earth
+    implementation("com.google.maps.android:android-maps-utils:3.8.2")
 
     // Permission Handling in Activities
     implementation("com.google.accompanist:accompanist-permissions:0.32.0")
