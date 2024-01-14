@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">AppLada</string>
+    <string name="location_permission_rationale_title">Permissions required</string>
+    <string name="location_permission_rationale_text">
+        This app requires Location permission to show near matches from you. Consider enable it
+        to have a better experience.
+    </string>
+    <string name="location_permission_rationale_action_button">OK</string>
+    <string name="my_location_fab_description">Move to your current location</string>
+</resources>
