@@ -36,7 +36,7 @@ data class Match(
     val duration: Int,
 
     @ColumnInfo(name = "category")
-    val category: String,
+    val category: MatchCategory,
 
     @ColumnInfo(name = "owner")
     val owner: String

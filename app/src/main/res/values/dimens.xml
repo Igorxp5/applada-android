@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="map_bottom_bar_padding">16dp</dimen>
+    <dimen name="map_bottom_bar_height">80dp</dimen>
+    <dimen name="map_bottom_bar_match_prop_vertical_padding">16dp</dimen>
+</resources>

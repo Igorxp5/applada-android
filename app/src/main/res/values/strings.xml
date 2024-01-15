@@ -7,4 +7,14 @@
     </string>
     <string name="location_permission_rationale_action_button">OK</string>
     <string name="my_location_fab_description">Move to your current location</string>
+    <string name="near_matches_bottom_bar_title">Matches on the view</string>
+    <plurals name="near_matches_bottom_bar_found_number">
+        <item quantity="one">Found %1$d match in advance</item>
+        <item quantity="other">Found %1$d matches in advance</item>
+    </plurals>
+    <string name="near_matches_bottom_bar_new_match_button">New match</string>
+    <string name="selected_match_view_more_description">See more</string>
+    <string name="selected_match_on_going_text">Happening Now</string>
+    <string name="selected_match_on_hold_text">Scheduled</string>
+    <string name="selected_match_finished_text">Finished</string>
 </resources>

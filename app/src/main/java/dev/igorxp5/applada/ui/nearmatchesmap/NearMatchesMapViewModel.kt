@@ -22,8 +22,13 @@ class NearMatchesMapViewModel @Inject constructor(
     val nearMatches: LiveData<List<Match>?>
         get() = _nearMatches
 
+    private val _selectedMatch = MutableLiveData<Match?>()
+    val selectedMatch: LiveData<Match?>
+        get() = _selectedMatch
+
     init {
-        _nearMatches.value = emptyList()
+        _selectedMatch.postValue(null)
+        _nearMatches.postValue(emptyList())
     }
 
     fun fetchNearMatches(location: LatLng) {
@@ -40,6 +45,14 @@ class NearMatchesMapViewModel @Inject constructor(
                 Log.e(LOG_TAG, result.exception.toString())
             }
         }
+    }
+
+    fun updateSelectedMatch(match: Match) {
+        _selectedMatch.postValue(match)
+    }
+
+    fun unSelectMatch() {
+        _selectedMatch.postValue(null)
     }
 
     companion object {

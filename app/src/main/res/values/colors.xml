@@ -7,4 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="soccer_marker_color">#222222</color>
+    <color name="volleyball_marker_color">#FFB74D</color>
+    <color name="basketball_marker_color">#F57C00</color>
+    <color name="on_going_marker_color">#D32F2F</color>
+
+    <color name="selected_match_status_on_going">#388E3C</color>
+    <color name="selected_match_status_on_hold">#F57C00</color>
+    <color name="selected_match_status_finished">#D32F2F</color>
 </resources>
