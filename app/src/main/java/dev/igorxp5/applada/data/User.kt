@@ -12,18 +12,18 @@ import java.util.Date
 @TypeConverters(DateConverter::class)
 data class User(
     @PrimaryKey
-    @ColumnInfo(name = "username")
+    @ColumnInfo("username")
     val username: String,
 
-    @ColumnInfo(name = "name")
+    @ColumnInfo("name")
     val name: String,
 
-    @ColumnInfo(name = "email")
+    @ColumnInfo("email")
     val email: String,
 
-    @ColumnInfo(name = "level")
+    @ColumnInfo("level")
     val level: Int,
 
-    @ColumnInfo(name = "registered_date")
+    @ColumnInfo("registered_date")
     val registeredDate: Date
 )

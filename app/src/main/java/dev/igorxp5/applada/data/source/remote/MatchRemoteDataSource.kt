@@ -1,6 +1,5 @@
-package dev.igorxp5.applada.data.source.local
+package dev.igorxp5.applada.data.source.remote
 
-import android.content.Context
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
@@ -13,8 +12,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MatchLocalDataSource internal constructor(
-    private val matchDao: MatchDao,
+class MatchRemoteDataSource internal constructor(
+    private val api: AppLadaApi,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : MatchDataSource {
 
@@ -22,7 +21,10 @@ class MatchLocalDataSource internal constructor(
         //Radius in Kilometers
         val centerPoint = LatLng(location.latitude, location.longitude)
         return@withContext try {
-            val matches = matchDao.getMatches()
+            val matches = api.getNearMatches(location.latitude, location.longitude, radius)
+            // FIXME: In real-world, the API would actually filter the unfinished matches by nearest to center point.
+            //  Since this project is using an Mock API service, the filtering feature is not available.
+            //  By now let's filter here.
             var filteredMatches = matches.filter { it.getStatus() != MatchStatus.FINISHED }
             filteredMatches = filteredMatches.filter {
                 val matchPoint = LatLng(it.location.latitude, it.location.longitude)
@@ -35,16 +37,11 @@ class MatchLocalDataSource internal constructor(
         }
     }
 
-    override suspend fun createMatch(match: Match): Result<Boolean> = withContext(ioDispatcher) {
-        return@withContext try {
-            matchDao.insertOrUpdateMatch(match)
-            Result.Success(true)
-        } catch (exc: Exception) {
-            Result.Error(exc)
-        }
+    override suspend fun createMatch(match: Match): Result<Boolean> {
+        TODO("Not yet implemented")
     }
 
     companion object {
-        const val LOG_TAG = "MatchLocalDataSource"
+        const val LOG_TAG = "MatchRemoteDataSource"
     }
 }

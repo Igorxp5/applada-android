@@ -11,8 +11,12 @@ import dev.igorxp5.applada.data.repositories.MatchRepository
 import dev.igorxp5.applada.data.source.MatchDataSource
 import dev.igorxp5.applada.data.source.local.AppLadaDatabase
 import dev.igorxp5.applada.data.source.local.MatchLocalDataSource
+import dev.igorxp5.applada.data.source.remote.AppLadaApi
+import dev.igorxp5.applada.data.source.remote.MatchRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -43,10 +47,10 @@ object ApplicationModule {
     @RemoteMatchDataSource
     @Provides
     fun provideRemoteMatchDataSource(
-        @LocalMatchDataSource localMatchDataSource: MatchDataSource
+        api: AppLadaApi,
+        ioDispatcher: CoroutineDispatcher
     ): MatchDataSource {
-        //TODO Change to use RemoteMatchDataSource
-        return localMatchDataSource
+        return MatchRemoteDataSource(api, ioDispatcher)
     }
 
     @Singleton
@@ -57,6 +61,16 @@ object ApplicationModule {
             AppLadaDatabase::class.java,
             AppLadaDatabase.DATABASE_FILENAME
         ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAppLadaApi(): AppLadaApi {
+        return Retrofit.Builder()
+            .baseUrl(AppLadaApi.API_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(AppLadaApi::class.java)
     }
 
     @Singleton

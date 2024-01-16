@@ -65,6 +65,8 @@ dependencies {
 
     // Dependencies for Hilt
     implementation("com.google.dagger:hilt-android:2.50")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.9.0")
     kapt("com.google.dagger:hilt-android-compiler:2.50")
 
     // Composable Android Maps for the Maps SDK for Android
@@ -82,6 +84,10 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+
+    // Dependencies for Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

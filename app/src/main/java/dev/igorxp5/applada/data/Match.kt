@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.google.gson.annotations.SerializedName
 import dev.igorxp5.applada.data.MatchStatus
 import dev.igorxp5.applada.data.converters.MatchCategoryConverter
 import dev.igorxp5.applada.data.converters.DateConverter
@@ -15,30 +16,39 @@ import java.util.Date
 @TypeConverters(MatchCategoryConverter::class, DateConverter::class)
 data class Match(
     @PrimaryKey
+    @SerializedName("_id")
     val id: String,
 
-    @ColumnInfo(name = "title")
+    @ColumnInfo("title")
+    @SerializedName("title")
     val title: String,
 
-    @ColumnInfo(name = "description")
+    @ColumnInfo("description")
+    @SerializedName("description")
     val description: String?,
 
-    @ColumnInfo(name = "limit_participants")
+    @ColumnInfo("limit_participants")
+    @SerializedName("limit_participants")
     val limitParticipants: Int?,
 
     @Embedded
+    @SerializedName("location")
     val location: Location,
 
-    @ColumnInfo(name = "date")
+    @ColumnInfo("date")
+    @SerializedName("date")
     val date: Date,
 
-    @ColumnInfo(name = "duration")
+    @ColumnInfo("duration")
+    @SerializedName("duration")
     val duration: Int,
 
-    @ColumnInfo(name = "category")
+    @ColumnInfo("category")
+    @SerializedName("category")
     val category: MatchCategory,
 
-    @ColumnInfo(name = "owner")
+    @ColumnInfo("owner")
+    @SerializedName("owner")
     val owner: String
 ) {
     fun getStatus(currentDate: Date = Date()): MatchStatus {
@@ -54,9 +64,11 @@ data class Match(
 }
 
 data class Location(
-    @ColumnInfo(name = "latitude")
+    @ColumnInfo("latitude")
+    @SerializedName("latitude")
     val latitude: Double,
 
-    @ColumnInfo(name = "longitude")
+    @ColumnInfo("longitude")
+    @SerializedName("longitude")
     val longitude: Double
 )

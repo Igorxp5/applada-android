@@ -11,21 +11,21 @@ import java.util.Date
 @TypeConverters(DateConverter::class)
 data class Credential(
     @PrimaryKey
-    @ColumnInfo(name = "username")
+    @ColumnInfo("username")
     val username: String,
 
-    @ColumnInfo(name = "access_token")
+    @ColumnInfo("access_token")
     val accessToken: String,
 
-    @ColumnInfo(name = "refresh_token")
+    @ColumnInfo("refresh_token")
     val refreshToken: String,
 
-    @ColumnInfo(name = "created_date")
+    @ColumnInfo("created_date")
     val createdDate: Date = Date(),
 
-    @ColumnInfo(name = "updated_date")
+    @ColumnInfo("updated_date")
     val updatedDate: Date = Date(),
 
-    @ColumnInfo(name = "active")
+    @ColumnInfo("active")
     val active: Boolean = true
 )

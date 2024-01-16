@@ -2,6 +2,8 @@ package dev.igorxp5.applada.ui.nearmatchesmap
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -22,17 +24,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -59,14 +57,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asAndroidColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -87,6 +84,7 @@ import dev.igorxp5.applada.R
 import dev.igorxp5.applada.data.Match
 import dev.igorxp5.applada.data.MatchCategory
 import dev.igorxp5.applada.data.MatchStatus
+import dev.igorxp5.applada.ui.newmatch.NewMatchActivity
 import kotlinx.coroutines.launch
 import java.util.TimeZone
 
@@ -229,10 +227,6 @@ class NearMatchesMapActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(text = "Volleyball")
-                    Text(text = "Volleyball")
-                    Text(text = "Volleyball")
-                    Text(text = "Volleyball")
-                    Text(text = "Volleyball")
                 }
             }
         }
@@ -241,8 +235,8 @@ class NearMatchesMapActivity : ComponentActivity() {
     @Composable
     fun MatchStatusTextForMatchSelected(match: Match) {
         val color = when(match.getStatus()) {
-            MatchStatus.ON_HOLD -> colorResource(R.color.selected_match_status_on_hold)
             MatchStatus.ON_GOING -> colorResource(R.color.selected_match_status_on_going)
+            MatchStatus.ON_HOLD -> colorResource(R.color.selected_match_status_on_hold)
             MatchStatus.FINISHED -> colorResource(R.color.selected_match_status_finished)
         }
         val text = when(match.getStatus()) {
@@ -263,6 +257,7 @@ class NearMatchesMapActivity : ComponentActivity() {
 
     @Composable
     fun BottomBarNearMatches() {
+        val context = LocalContext.current
         val totalMatches = mapViewModel.nearMatches.observeAsState().value?.count() ?: 0
 
         Row {
@@ -283,7 +278,9 @@ class NearMatchesMapActivity : ComponentActivity() {
                 horizontalAlignment = Alignment.End,
             ) {
                 TextButton(
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        context.startActivity(Intent(context, NewMatchActivity::class.java))
+                    }
                 ) {
                     Text(
                         text = stringResource(R.string.near_matches_bottom_bar_new_match_button).uppercase()

@@ -8,17 +8,18 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class MatchRepository(
-    private val localSource: MatchDataSource,
     private val remoteSource: MatchDataSource,
+    private val localSource: MatchDataSource,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     suspend fun getNearMatches(location: Location, radius: Double) : Result<List<Match>> {
-        var result : Result<List<Match>>? = null
-        if (remoteSource.isAccessible()) {
-            result = remoteSource.getNearMatches(location, radius)
-        }
-        if (result == null || result is Result.Error) {
+        var result : Result<List<Match>> = remoteSource.getNearMatches(location, radius)
+        if (result is Result.Error) {
             result = localSource.getNearMatches(location, radius)
+        } else if (result is Result.Success) {
+            result.data.forEach {
+                localSource.createMatch(it)
+            }
         }
         return result
     }
