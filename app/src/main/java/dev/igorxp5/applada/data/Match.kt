@@ -49,7 +49,10 @@ data class Match(
 
     @ColumnInfo("owner")
     @SerializedName("owner")
-    val owner: String
+    val owner: String,
+
+    @ColumnInfo("_cache_updated_date")
+    val cacheUpdatedDate: Date
 ) {
     fun getStatus(currentDate: Date = Date()): MatchStatus {
         val endTime = date.time + duration * 1000 // convert duration to milliseconds

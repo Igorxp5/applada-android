@@ -6,6 +6,7 @@ import dev.igorxp5.applada.data.Result
 import dev.igorxp5.applada.data.source.MatchDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import java.util.Date
 
 class MatchRepository(
     private val remoteSource: MatchDataSource,
@@ -18,7 +19,8 @@ class MatchRepository(
             result = localSource.getNearMatches(location, radius)
         } else if (result is Result.Success) {
             result.data.forEach {
-                localSource.createMatch(it)
+                val cacheMatch = it.copy(cacheUpdatedDate = Date())
+                localSource.createMatch(cacheMatch)
             }
         }
         return result

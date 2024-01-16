@@ -7,7 +7,7 @@ import dev.igorxp5.applada.data.User
 import dev.igorxp5.applada.data.Match
 
 // TODO enable exportSchema to have database changing history tracked in Git
-@Database(entities = [Match::class, User::class, Credential::class], version = 2, exportSchema = false)
+@Database(entities = [Match::class, User::class, Credential::class], version = 3, exportSchema = false)
 abstract class AppLadaDatabase : RoomDatabase() {
 
     abstract fun matchDao(): MatchDao
