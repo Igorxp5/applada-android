@@ -1,4 +1,4 @@
-package dev.igorxp5.applada.data.converters
+package dev.igorxp5.applada.data.roomconverters
 
 import androidx.room.TypeConverter
 import dev.igorxp5.applada.data.MatchCategory

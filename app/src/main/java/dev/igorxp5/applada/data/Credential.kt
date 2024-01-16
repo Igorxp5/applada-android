@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import dev.igorxp5.applada.data.converters.DateConverter
+import dev.igorxp5.applada.data.roomconverters.DateConverter
 import java.util.Date
 
 @Entity(tableName = "credentials")

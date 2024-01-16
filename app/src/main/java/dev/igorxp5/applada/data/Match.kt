@@ -6,8 +6,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.igorxp5.applada.data.converters.MatchCategoryConverter
-import dev.igorxp5.applada.data.converters.DateConverter
+import dev.igorxp5.applada.data.roomconverters.MatchCategoryConverter
+import dev.igorxp5.applada.data.roomconverters.DateConverter
 import java.util.Date
 
 

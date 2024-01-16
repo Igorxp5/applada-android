@@ -86,6 +86,8 @@ import dev.igorxp5.applada.data.MatchCategory
 import dev.igorxp5.applada.data.MatchStatus
 import dev.igorxp5.applada.ui.newmatch.NewMatchActivity
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import java.util.TimeZone
 
 @AndroidEntryPoint
@@ -162,7 +164,7 @@ class NearMatchesMapActivity : ComponentActivity() {
         Box {
            TopAppBar(
                title = {
-                       Text("AppLada")
+                       Text(stringResource(R.string.app_name))
                },
                modifier = Modifier.fillMaxWidth())
       }
@@ -241,7 +243,10 @@ class NearMatchesMapActivity : ComponentActivity() {
         }
         val text = when(match.getStatus()) {
             MatchStatus.ON_GOING -> stringResource(R.string.selected_match_on_going_text)
-            MatchStatus.ON_HOLD -> stringResource(R.string.selected_match_on_hold_text)
+            MatchStatus.ON_HOLD -> {
+                val dateFormat = SimpleDateFormat("MMM d 'at' HH:mm", Locale.getDefault(Locale.Category.FORMAT))
+                stringResource(R.string.selected_match_on_hold_text, dateFormat.format(match.date))
+            }
             MatchStatus.FINISHED -> stringResource(R.string.selected_match_finished_text)
         }
         Text(
