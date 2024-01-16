@@ -16,6 +16,6 @@ interface AppLadaApi {
                        @Query("radius") radius: Double): List<Match>
 
     companion object {
-        const val API_BASE_URL = "https://crudcrud.com/api/0532b665439541daa5658f8f8aa98666/"
+        const val API_BASE_URL = "https://crudcrud.com/api/8d261fd5d9e040cba9f655ed431dd6f7/"
     }
 }

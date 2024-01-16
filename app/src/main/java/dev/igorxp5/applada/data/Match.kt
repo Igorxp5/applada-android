@@ -5,8 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.google.gson.annotations.SerializedName
-import dev.igorxp5.applada.data.MatchStatus
+import com.fasterxml.jackson.annotation.JsonProperty
 import dev.igorxp5.applada.data.converters.MatchCategoryConverter
 import dev.igorxp5.applada.data.converters.DateConverter
 import java.util.Date
@@ -16,43 +15,43 @@ import java.util.Date
 @TypeConverters(MatchCategoryConverter::class, DateConverter::class)
 data class Match(
     @PrimaryKey
-    @SerializedName("_id")
+    @JsonProperty("_id")
     val id: String,
 
     @ColumnInfo("title")
-    @SerializedName("title")
+    @JsonProperty("title")
     val title: String,
 
     @ColumnInfo("description")
-    @SerializedName("description")
+    @JsonProperty("description")
     val description: String?,
 
     @ColumnInfo("limit_participants")
-    @SerializedName("limit_participants")
+    @JsonProperty("limit_participants")
     val limitParticipants: Int?,
 
     @Embedded
-    @SerializedName("location")
+    @JsonProperty("location")
     val location: Location,
 
     @ColumnInfo("date")
-    @SerializedName("date")
+    @JsonProperty("date")
     val date: Date,
 
     @ColumnInfo("duration")
-    @SerializedName("duration")
+    @JsonProperty("duration")
     val duration: Int,
 
     @ColumnInfo("category")
-    @SerializedName("category")
+    @JsonProperty("category")
     val category: MatchCategory,
 
     @ColumnInfo("owner")
-    @SerializedName("owner")
+    @JsonProperty("owner")
     val owner: String,
 
     @ColumnInfo("_cache_updated_date")
-    val cacheUpdatedDate: Date
+    val cacheUpdatedDate: Date = Date()
 ) {
     fun getStatus(currentDate: Date = Date()): MatchStatus {
         val endTime = date.time + duration * 1000 // convert duration to milliseconds
@@ -68,10 +67,10 @@ data class Match(
 
 data class Location(
     @ColumnInfo("latitude")
-    @SerializedName("latitude")
+    @JsonProperty("latitude")
     val latitude: Double,
 
     @ColumnInfo("longitude")
-    @SerializedName("longitude")
+    @JsonProperty("longitude")
     val longitude: Double
 )

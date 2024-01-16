@@ -19,8 +19,7 @@ class MatchRepository(
             result = localSource.getNearMatches(location, radius)
         } else if (result is Result.Success) {
             result.data.forEach {
-                val cacheMatch = it.copy(cacheUpdatedDate = Date())
-                localSource.createMatch(cacheMatch)
+                localSource.createMatch(it)
             }
         }
         return result

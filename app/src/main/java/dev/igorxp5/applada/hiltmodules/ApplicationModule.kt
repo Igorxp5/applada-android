@@ -2,6 +2,8 @@ package dev.igorxp5.applada.hiltmodules
 
 import android.content.Context
 import androidx.room.Room
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +18,7 @@ import dev.igorxp5.applada.data.source.remote.MatchRemoteDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.jackson.JacksonConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -66,9 +68,12 @@ object ApplicationModule {
     @Singleton
     @Provides
     fun provideAppLadaApi(): AppLadaApi {
+        // Enable Kotlin-way to set default value for JSON deserialization
+        val jsonObjectMapper = ObjectMapper().registerKotlinModule()
+
         return Retrofit.Builder()
             .baseUrl(AppLadaApi.API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(JacksonConverterFactory.create(jsonObjectMapper))
             .build()
             .create(AppLadaApi::class.java)
     }
