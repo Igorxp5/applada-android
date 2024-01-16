@@ -52,6 +52,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -64,6 +65,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -161,13 +163,16 @@ class NearMatchesMapActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun TopBarLayout() {
-        Box {
-           TopAppBar(
-               title = {
-                       Text(stringResource(R.string.app_name))
-               },
-               modifier = Modifier.fillMaxWidth())
-      }
+       TopAppBar(
+           modifier = Modifier
+            .shadow(
+                elevation = 5.dp,
+                spotColor = Color.DarkGray,
+            ),
+           title = {
+                   Text(stringResource(R.string.app_name))
+           }
+       )
     }
 
     @Composable
