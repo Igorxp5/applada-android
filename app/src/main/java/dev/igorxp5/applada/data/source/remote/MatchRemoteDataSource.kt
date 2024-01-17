@@ -37,8 +37,14 @@ class MatchRemoteDataSource internal constructor(
         }
     }
 
-    override suspend fun createMatch(match: Match): Result<Match> {
-        TODO("Not yet implemented")
+    override suspend fun createMatch(match: Match): Result<Match> = withContext(ioDispatcher) {
+        return@withContext try {
+            val createdSubscription = api.createMatch(match)
+            Result.Success(createdSubscription)
+        } catch (exc: Exception) {
+            Log.e(LOG_TAG, exc.stackTraceToString())
+            Result.Error<Match>(exc)
+        }
     }
 
     companion object {

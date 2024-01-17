@@ -13,13 +13,21 @@ class MatchRepository(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     suspend fun getNearMatches(location: Location, radius: Double) : Result<List<Match>> {
-        var result : Result<List<Match>> = remoteSource.getNearMatches(location, radius)
+        var result = remoteSource.getNearMatches(location, radius)
         if (result is Result.Error<*>) {
             result = Result.Error(result.exception, localSource.getNearMatches(location, radius))
         } else if (result is Result.Success) {
             result.data.forEach {
                 localSource.createMatch(it)
             }
+        }
+        return result
+    }
+
+    suspend fun createMatch(match: Match) : Result<Match> {
+        val result = remoteSource.createMatch(match)
+        if (result is Result.Success) {
+            localSource.createMatch(match)
         }
         return result
     }

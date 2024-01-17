@@ -303,7 +303,8 @@ class NearMatchesMapActivity : ComponentActivity() {
             ) {
                 TextButton(
                     onClick = {
-                        context.startActivity(Intent(context, NewMatchActivity::class.java))
+                        // context.startActivity(Intent(context, NewMatchActivity::class.java))
+                        mapViewModel.createRandomMatch()
                     }
                 ) {
                     Text(
@@ -321,6 +322,7 @@ class NearMatchesMapActivity : ComponentActivity() {
         val defaultCenterPoint = getLatLngFromCurrentTimeZone()
         var centerPoint by remember { mutableStateOf(defaultCenterPoint) }
         var deviceLocation by remember { mutableStateOf<LatLng?>(null) }
+        var firstFetchNearMatchDone by remember { mutableStateOf(false) }
 
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(centerPoint, DEFAULT_MAP_CAMERA_ZOOM)
@@ -335,8 +337,12 @@ class NearMatchesMapActivity : ComponentActivity() {
                         centerPoint = deviceLocation!!
                         cameraPositionState.position = CameraPosition.fromLatLngZoom(centerPoint, DEVICE_LOCATION_MAP_CAMERA_ZOOM)
                     }
+                    mapViewModel.currentLocation.postValue(deviceLocation)
                 }
-                mapViewModel.fetchNearMatches(centerPoint)
+                if (!firstFetchNearMatchDone) {
+                    mapViewModel.fetchNearMatches(centerPoint)
+                    firstFetchNearMatchDone = true
+                }
             }
         } else {
             mapViewModel.fetchNearMatches(centerPoint)

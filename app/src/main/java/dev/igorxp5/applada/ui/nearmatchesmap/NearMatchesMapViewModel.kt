@@ -1,7 +1,6 @@
 package dev.igorxp5.applada.ui.nearmatchesmap
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.igorxp5.applada.data.Location
 import dev.igorxp5.applada.data.Match
+import dev.igorxp5.applada.data.MatchCategory
 import dev.igorxp5.applada.data.source.Result
 import dev.igorxp5.applada.data.Subscription
 import dev.igorxp5.applada.data.repositories.MatchRepository
@@ -16,35 +16,38 @@ import dev.igorxp5.applada.data.repositories.SubscriptionRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import java.util.Date
+import java.util.concurrent.ThreadLocalRandom
 import javax.inject.Inject
+import kotlin.math.asin
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.random.Random
 
 @HiltViewModel
 class NearMatchesMapViewModel @Inject constructor(
     private val matchRepository: MatchRepository,
     private val subscriptionRepository: SubscriptionRepository
 ) : ViewModel() {
-    private val _nearMatches = MutableLiveData<List<Match>?>()
-    val nearMatches: LiveData<List<Match>?>
-        get() = _nearMatches
+    val nearMatches = MutableLiveData<List<Match>?>()
 
-    private val _selectedMatch = MutableLiveData<Match?>()
-    val selectedMatch: LiveData<Match?>
-        get() = _selectedMatch
+    val selectedMatch = MutableLiveData<Match?>()
 
-    private val _selectedMatchSubscription = MutableLiveData<Subscription?>()
-    private val _isSubscribedToSelectedMatch = MutableLiveData<Boolean?>()
-
-    val isSubscribedToSelectedMatch: LiveData<Boolean?>
-        get() = _isSubscribedToSelectedMatch
+    private val selectedMatchSubscription = MutableLiveData<Subscription?>()
+    val isSubscribedToSelectedMatch = MutableLiveData<Boolean?>()
 
     private var _fetchNearMatchesJob: Job? = null
     private var _fetchSelectedMatchSubscription: Job? = null
 
+    val currentLocation = MutableLiveData<LatLng?>()
+
     init {
-        _selectedMatchSubscription.postValue(null)
-        _isSubscribedToSelectedMatch.postValue(null)
-        _selectedMatch.postValue(null)
-        _nearMatches.postValue(emptyList())
+        selectedMatchSubscription.postValue(null)
+        isSubscribedToSelectedMatch.postValue(null)
+        selectedMatch.postValue(null)
+        nearMatches.postValue(emptyList())
+        currentLocation.postValue(null)
     }
 
     fun fetchNearMatches(location: LatLng) {
@@ -57,11 +60,11 @@ class NearMatchesMapViewModel @Inject constructor(
 
             this.ensureActive()
             if (result is Result.Success) {
-                _nearMatches.postValue(result.data)
+                nearMatches.postValue(result.data)
             } else if (result is Result.Error) {
                 result.fallbackResult?.let {
                     if (it is Result.Success) {
-                        _nearMatches.postValue(it.data)
+                        nearMatches.postValue(it.data)
                     }
                 }
                 // TODO Show an error in the snackbar
@@ -71,39 +74,39 @@ class NearMatchesMapViewModel @Inject constructor(
     }
 
     fun updateSelectedMatch(match: Match) {
-        val matchSubscription = _selectedMatchSubscription.value
+        val matchSubscription = selectedMatchSubscription.value
         if (matchSubscription == null || matchSubscription.matchId != match.id) {
-            _selectedMatchSubscription.postValue(null)
-            _isSubscribedToSelectedMatch.postValue(null)
+            selectedMatchSubscription.postValue(null)
+            isSubscribedToSelectedMatch.postValue(null)
             _fetchSelectedMatchSubscription?.cancel()
             _fetchSelectedMatchSubscription = viewModelScope.launch {
                 val subscriptionResult = subscriptionRepository.getMatchSubscription(match.id)
                 this.ensureActive()
                 if (subscriptionResult is Result.Success) {
-                    _selectedMatchSubscription.postValue(subscriptionResult.data)
-                    _isSubscribedToSelectedMatch.postValue(subscriptionResult.data != null)
+                    selectedMatchSubscription.postValue(subscriptionResult.data)
+                    isSubscribedToSelectedMatch.postValue(subscriptionResult.data != null)
                 } else if (subscriptionResult is Result.Error) {
                     // TODO Show an error in the snackbar
                     Log.e(LOG_TAG, subscriptionResult.exception.toString())
                 }
             }
         }
-        _selectedMatch.postValue(match)
+        selectedMatch.postValue(match)
     }
 
     fun unSelectMatch() {
-        _selectedMatch.postValue(null)
+        selectedMatch.postValue(null)
     }
 
     fun subscribeToMatch(match: Match) {
         // Foreseen the result (to be responsible for the user),
         //  if it fail the UI can bring the previous status back
-        _isSubscribedToSelectedMatch.postValue(true)
+        isSubscribedToSelectedMatch.postValue(true)
         viewModelScope.launch {
             val result = subscriptionRepository.createMatchSubscription(match.id)
             if (result is Result.Error<*>) { // Undo if it tails
                 // TODO: Show an error in the snackbar
-                _isSubscribedToSelectedMatch.postValue(false)
+                isSubscribedToSelectedMatch.postValue(false)
             }
         }
     }
@@ -111,18 +114,81 @@ class NearMatchesMapViewModel @Inject constructor(
     fun unsubscribeToMatch(match: Match) {
         // Foreseen the result (to be responsible for the user),
         //  if it fail the UI can bring the previous status back
-        _isSubscribedToSelectedMatch.postValue(false)
+        isSubscribedToSelectedMatch.postValue(false)
         viewModelScope.launch {
             val result = subscriptionRepository.cancelMatchSubscription(match.id)
             if (result is Result.Error<*>) { // Undo if it tails
                 // TODO: Show an error in the snackbar
-                _isSubscribedToSelectedMatch.postValue(true)
+                isSubscribedToSelectedMatch.postValue(true)
             }
+        }
+    }
+
+    fun createRandomMatch() {
+        if (currentLocation.value != null) {
+            viewModelScope.launch {
+                val location = currentLocation.value!!
+                val earthRadius = 6371.0
+
+                val randomRadiusRange = 2.0 // 2 Km
+
+                val radiusRadians = randomRadiusRange / earthRadius
+
+                val randomAngle = Math.toRadians(Math.random() * 360)
+
+                val centerLatRadians = Math.toRadians(location.latitude)
+                val centerLonRadians = Math.toRadians(location.longitude)
+
+                val newLatRadians = asin(sin(centerLatRadians) * cos(radiusRadians) +
+                        cos(centerLatRadians) * sin(radiusRadians) * cos(randomAngle))
+
+                val newLonRadians = centerLonRadians + atan2(sin(randomAngle) * sin(radiusRadians) * cos(centerLatRadians),
+                        cos(radiusRadians) - sin(centerLatRadians) * sin(newLatRadians))
+
+                val newLatitude = Math.toDegrees(newLatRadians)
+                val newLongitude = Math.toDegrees(newLonRadians)
+
+                val matchLocation = Location(newLatitude, newLongitude)
+                val fromDate = Date()
+                val toDate = Date(fromDate.time + 24 * 60 * 60 * 1000) // One day ahead
+
+                val randomInt = Random.nextInt(100)
+
+                val match = Match(
+                    id = "",
+                    title = "The match #${randomInt}",
+                    description = null,
+                    limitParticipants = null,
+                    location = matchLocation,
+                    date = getRandomDate(fromDate, toDate),
+                    duration = 3600,
+                    category = getRandomMatchCategory(),
+                    owner = "DummyOwner"
+                )
+                matchRepository.createMatch(match)
+                fetchNearMatches(location)
+            }
+        } else {
+            // TODO: Show an error in the snackbar
         }
     }
 
     companion object {
         const val LOG_TAG = "NearMatchesMapViewModel"
         const val NEAR_MATCH_RADIUS = 25.0 // Km
+
+        private fun getRandomMatchCategory(): MatchCategory {
+            val values = MatchCategory.entries.toTypedArray()
+            val randomIndex = Random.nextInt(values.size)
+            return values[randomIndex]
+        }
+
+        private fun getRandomDate(from: Date, to: Date): Date {
+            val randomMillisSinceEpoch = ThreadLocalRandom
+              .current()
+              .nextLong(from.time, to.time)
+
+            return Date(randomMillisSinceEpoch)
+        }
     }
 }

@@ -18,6 +18,9 @@ interface AppLadaApi {
                        @Query("longitude") longitude: Double,
                        @Query("radius") radius: Double): List<Match>
 
+    @POST("matches")
+    suspend fun createMatch(@Body match: Match): Match
+
     @GET("subscriptions")
     suspend fun getUserSubscriptions(): List<Subscription>
 

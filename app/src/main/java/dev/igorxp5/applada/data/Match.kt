@@ -17,7 +17,7 @@ import java.util.Date
 data class Match(
     @PrimaryKey
     @ColumnInfo("id")
-    @JsonProperty("_id")
+    @JsonProperty("_id", access = JsonProperty.Access.WRITE_ONLY)
     val id: String,
 
     @ColumnInfo("title")
