@@ -6,7 +6,7 @@ import com.google.maps.android.SphericalUtil
 import dev.igorxp5.applada.data.Location
 import dev.igorxp5.applada.data.Match
 import dev.igorxp5.applada.data.MatchStatus
-import dev.igorxp5.applada.data.Result
+import dev.igorxp5.applada.data.source.Result
 import dev.igorxp5.applada.data.source.MatchDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -32,12 +32,12 @@ class MatchRemoteDataSource internal constructor(
             }
             Result.Success(filteredMatches)
         } catch (exc: Exception) {
-            Log.e(LOG_TAG, exc.toString())
-            Result.Error(exc)
+            Log.e(LOG_TAG, exc.stackTraceToString())
+            Result.Error<List<Match>>(exc)
         }
     }
 
-    override suspend fun createMatch(match: Match): Result<Boolean> {
+    override suspend fun createMatch(match: Match): Result<Match> {
         TODO("Not yet implemented")
     }
 

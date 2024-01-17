@@ -10,7 +10,7 @@ class NewMatchActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Text("Hello")
+            Text("You would be able to create a match using the app if I had finished on time")
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.igorxp5.applada.data.roomconverters.MatchCategoryConverter
 import dev.igorxp5.applada.data.roomconverters.DateConverter
@@ -15,6 +16,7 @@ import java.util.Date
 @TypeConverters(MatchCategoryConverter::class, DateConverter::class)
 data class Match(
     @PrimaryKey
+    @ColumnInfo("id")
     @JsonProperty("_id")
     val id: String,
 
@@ -51,6 +53,7 @@ data class Match(
     val owner: String,
 
     @ColumnInfo("_cache_updated_date")
+    @JsonIgnore
     val cacheUpdatedDate: Date = Date()
 ) {
     fun getStatus(currentDate: Date = Date()): MatchStatus {

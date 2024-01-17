@@ -24,11 +24,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -178,6 +180,7 @@ class NearMatchesMapActivity : ComponentActivity() {
     @Composable
     fun BottomBarLayout() {
         val selectedMatch = mapViewModel.selectedMatch.observeAsState().value
+        val isSubscribedToSelectedMatch = mapViewModel.isSubscribedToSelectedMatch.observeAsState().value
 
         AnimatedContent(
             selectedMatch,
@@ -197,7 +200,7 @@ class NearMatchesMapActivity : ComponentActivity() {
                 if (selected == null) {
                     BottomBarNearMatches()
                 } else {
-                    BottomBarMatchSelected(selected)
+                    BottomBarMatchSelected(selected, isSubscribedToSelectedMatch)
                 }
             }
         }
@@ -205,35 +208,51 @@ class NearMatchesMapActivity : ComponentActivity() {
     }
 
     @Composable
-    fun BottomBarMatchSelected(match: Match) {
+    fun BottomBarMatchSelected(match: Match, isSubscribed: Boolean?) {
+        // isSubscribed as null means the value is not known
         Column {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                ) {
                     Text(
                         style = MaterialTheme.typography.titleLarge.copy(),
                         text = match.title
                     )
                     MatchStatusTextForMatchSelected(match)
-                }
-
-                IconButton(
-                    onClick = { /* TODO */ }
-                ) {
-                    Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.selected_match_view_more_description))
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
                     Text(text = "Volleyball")
+                }
+                Box(
+                    modifier = Modifier.fillMaxHeight(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    isSubscribed?.let {
+                        val iconPainter = if (isSubscribed) {
+                            painterResource(R.drawable.ic_notifications_off)
+                        } else {
+                            painterResource(R.drawable.ic_notifications)
+                        }
+                        val iconDescription = if (isSubscribed) {
+                            stringResource(R.string.selected_match_unsubscribe)
+                        } else {
+                            stringResource(R.string.selected_match_subscribe)
+                        }
+                        IconButton(
+                            onClick = {
+                                if (isSubscribed) {
+                                    mapViewModel.unsubscribeToMatch(match)
+                                } else {
+                                    mapViewModel.subscribeToMatch(match)
+                                }
+                            }
+                        ) {
+                            Icon(iconPainter, contentDescription = iconDescription)
+                        }
+                    }
+
                 }
             }
         }
@@ -258,11 +277,6 @@ class NearMatchesMapActivity : ComponentActivity() {
             text = text,
             color = color
         )
-    }
-
-    @Composable
-    fun MatchPropertyIconText(icon: Painter, text: String) {
-
     }
 
     @Composable

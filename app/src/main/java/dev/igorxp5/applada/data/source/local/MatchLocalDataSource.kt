@@ -1,13 +1,12 @@
 package dev.igorxp5.applada.data.source.local
 
-import android.content.Context
 import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import dev.igorxp5.applada.data.Location
 import dev.igorxp5.applada.data.Match
 import dev.igorxp5.applada.data.MatchStatus
-import dev.igorxp5.applada.data.Result
+import dev.igorxp5.applada.data.source.Result
 import dev.igorxp5.applada.data.source.MatchDataSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -30,17 +29,17 @@ class MatchLocalDataSource internal constructor(
             }
             Result.Success(filteredMatches)
         } catch (exc: Exception) {
-            Log.e(LOG_TAG, exc.toString())
-            Result.Error(exc)
+            Log.e(LOG_TAG, exc.stackTraceToString())
+            Result.Error<List<Match>>(exc)
         }
     }
 
-    override suspend fun createMatch(match: Match): Result<Boolean> = withContext(ioDispatcher) {
+    override suspend fun createMatch(match: Match): Result<Match> = withContext(ioDispatcher) {
         return@withContext try {
             matchDao.insertOrUpdateMatch(match)
-            Result.Success(true)
+            Result.Success(match)
         } catch (exc: Exception) {
-            Result.Error(exc)
+            Result.Error<Match>(exc)
         }
     }
 

@@ -1,6 +1,9 @@
 package dev.igorxp5.applada.data.source.remote
 
 import dev.igorxp5.applada.data.Match
+import dev.igorxp5.applada.data.Subscription
+import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -15,7 +18,16 @@ interface AppLadaApi {
                        @Query("longitude") longitude: Double,
                        @Query("radius") radius: Double): List<Match>
 
+    @GET("subscriptions")
+    suspend fun getUserSubscriptions(): List<Subscription>
+
+    @POST("subscriptions")
+    suspend fun createUserSubscription(@Body subscription: Subscription): Subscription
+
+    @DELETE("subscriptions/{id}")
+    suspend fun deleteUserSubscription(@Path("id") subscriptionId: String)
+
     companion object {
-        const val API_BASE_URL = "https://crudcrud.com/api/8d261fd5d9e040cba9f655ed431dd6f7/"
+        const val API_BASE_URL = "https://crudcrud.com/api/af534c5941f94ac4be0d3bdf6634c3ef/"
     }
 }
