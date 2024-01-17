@@ -1,5 +1,7 @@
 package dev.igorxp5.applada.data.source.remote
 
+import android.content.Context
+import android.content.pm.PackageManager
 import dev.igorxp5.applada.data.Match
 import dev.igorxp5.applada.data.Subscription
 import retrofit2.http.Body
@@ -31,6 +33,12 @@ interface AppLadaApi {
     suspend fun deleteUserSubscription(@Path("id") subscriptionId: String)
 
     companion object {
-        const val API_BASE_URL = "https://crudcrud.com/api/af534c5941f94ac4be0d3bdf6634c3ef/"
+        fun getBaseUrl(context: Context) : String? {
+            var baseUrl: String?
+            context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA).apply {
+                baseUrl = metaData.getString("dev.igorxp5.applada.env.API_BASE_URL")
+            }
+            return baseUrl
+        }
     }
 }

@@ -25,11 +25,12 @@ android {
             useSupportLibrary = true
         }
 
-        val keystoreFile = project.rootProject.file("apikeys.properties")
+        val keystoreFile = project.rootProject.file("env.properties")
         val properties = Properties()
         properties.load(keystoreFile.inputStream())
 
         manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = properties.getProperty("GOOGLE_MAPS_API_KEY") ?: ""
+        manifestPlaceholders["API_BASE_URL"] = properties.getProperty("API_BASE_URL") ?: ""
     }
 
     buildTypes {

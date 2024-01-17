@@ -36,6 +36,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${GOOGLE_MAPS_API_KEY}" />
+
+        <meta-data
+            android:name="dev.igorxp5.applada.env.API_BASE_URL"
+            android:value="${API_BASE_URL}" />
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package dev.igorxp5.applada.hiltmodules
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -103,7 +104,9 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideAppLadaApi(): AppLadaApi {
+    fun provideAppLadaApi(
+        application: Application
+    ): AppLadaApi {
         // Enable Kotlin-way to set default value for JSON deserialization
         //  and using ISO8601 for Date due to the API server limitation
         val jsonObjectMapper = ObjectMapper()
@@ -112,7 +115,7 @@ object ApplicationModule {
             .registerKotlinModule()
 
         return Retrofit.Builder()
-            .baseUrl(AppLadaApi.API_BASE_URL)
+            .baseUrl(AppLadaApi.getBaseUrl(application) ?: "")
             .addConverterFactory(JacksonConverterFactory.create(jsonObjectMapper))
             .build()
             .create(AppLadaApi::class.java)
